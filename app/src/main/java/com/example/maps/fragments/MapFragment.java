@@ -19,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -36,6 +37,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private Geocoder geocoder;
     private List<Address> addresses;
+
+    private MarkerOptions markerOptions;
 
     public MapFragment() {
         // Required empty public constructor
@@ -75,8 +78,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //Set the zoom of the camera
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 
+        //Instance marker and set features
+        markerOptions = new MarkerOptions();
+        markerOptions.position(target); //set the target position in map
+        markerOptions.title("My market"); //set title to market
+        markerOptions.draggable(true); //set market can be dragging
+        //markerOptions.snippet("this is a text box in that you can change data");
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(android.R.drawable.star_on)); //set an icon for the marker
+
         // Add a market at the position that i want to see
-        mMap.addMarker(new MarkerOptions().position(target).title("Marker in NY").draggable(true));
+        mMap.addMarker(markerOptions);
+        //mMap.addMarker(new MarkerOptions().position(target).title("Marker in NY").draggable(true));
 
         //Move camera to position of target
         mMap.moveCamera(CameraUpdateFactory.newLatLng(target));
@@ -120,12 +132,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         String country = addresses.get(0).getCountryName();
         String postalCode = addresses.get(0).getPostalCode();
 
-        Toast.makeText(getContext(), "Country: " + country + "\n"
+        //hide snippet
+        marker.hideInfoWindow();
+        //change info of snippet
+        marker.setSnippet("Postal Code: " + postalCode );
+        //show snippet with info changed
+        marker.showInfoWindow();
+
+        /*Toast.makeText(getContext(), "Country: " + country + "\n"
                 + "State: " + state + "\n"
                 + "City: " + city + "\n"
                 + "Postal Code: " + postalCode + "\n"
                 + "address: " + address + "\n",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show();*/
 
     }
 }
