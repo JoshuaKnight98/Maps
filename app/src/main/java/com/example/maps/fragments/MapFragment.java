@@ -1,5 +1,6 @@
 package com.example.maps.fragments;
 
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             mapView.onCreate(null);
             mapView.onResume();
             mapView.getMapAsync(this::onMapReady);
+        }
+
+        checkIfGpsIsEnabled();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkIfGpsIsEnabled();
+    }
+
+    private void checkIfGpsIsEnabled(){
+        try {
+            //get state of gps
+            int gpsSignal = Settings.Secure.getInt(getActivity().getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            if(gpsSignal == 0){
+                //gps is off
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
